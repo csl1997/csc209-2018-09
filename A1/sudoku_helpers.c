@@ -3,10 +3,14 @@
 int is_vaild(int *num, int l) {
      int i, j;
      for (i = 0; i < l; i++) {
-       for (j = (i + 1); j < l; j++) {
-         if (num[i] == num[j]) {
-           return 1;
+       if (num[i] > 0 && num[i] < l + 1) {
+         for (j = (i + 1); j < l; j++) {
+           if (num[i] == num[j]) {
+             return 1;
+           }
          }
+       } else {
+         return 1;
        }
      }
      return 0;
