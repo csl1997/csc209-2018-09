@@ -16,6 +16,23 @@
 
 /* Write your solution here */
 
+void fib(int **sequence_pt, int count) {
+  int i;
+  int *sequence;
+  sequence = malloc(sizeof(int) * count);
+  *sequence_pt = sequence;
+
+  for (i = 0; i < count; i++) {
+    if (i == 0) {
+      sequence[0] = 0;
+    } else if (i == 1) {
+      sequence[1] = 1;
+    } else {
+      sequence[i] = sequence[i - 1] + sequence[i - 2];
+    }
+  }
+
+}
 
 int main(int argc, char **argv) {
     /* do not change this main function */
