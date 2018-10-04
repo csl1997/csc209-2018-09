@@ -12,6 +12,18 @@
     the string "fun" and returns 5.
 */
 
+int truncate(char *tar, int num) {
+  int len = strlen(tar);
+  int result = 0;
+
+  if (num < len) {
+    tar[num] = '\0';
+    result = len - num;
+  }
+
+  return result;
+}
+
 
 
 int main(int argc, char **argv) {
