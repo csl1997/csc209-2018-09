@@ -4,31 +4,56 @@
 
 
 /*
- * Read in the location of the pixel array, the image width, and the image 
+ * Read in the location of the pixel array, the image width, and the image
  * height in the given bitmap file.
  */
 void read_bitmap_metadata(FILE *image, int *pixel_array_offset, int *width, int *height) {
-
+  fseek(image, 10, SEEK_SET);
+  fread(pixel_array_offset, 4, 1, image);
+  fseek(image, 18, SEEK_SET);
+  fread(width, 4, 1, image);
+  fseek(image, 22, SEEK_SET);
+  fread(height, 4, 1, image);
 }
 
 /*
  * Read in pixel array by following these instructions:
  *
- * 1. First, allocate space for m `struct pixel *` values, where m is the 
- *    height of the image.  Each pointer will eventually point to one row of 
+ * 1. First, allocate space for m `struct pixel *` values, where m is the
+ *    height of the image.  Each pointer will eventually point to one row of
  *    pixel data.
- * 2. For each pointer you just allocated, initialize it to point to 
+ * 2. For each pointer you just allocated, initialize it to point to
  *    heap-allocated space for an entire row of pixel data.
- * 3. Use the given file and pixel_array_offset to initialize the actual 
- *    struct pixel values. Assume that `sizeof(struct pixel) == 3`, which is 
+ * 3. Use the given file and pixel_array_offset to initialize the actual
+ *    struct pixel values. Assume that `sizeof(struct pixel) == 3`, which is
  *    consistent with the bitmap file format.
- *    NOTE: We've tested this assumption on the Teaching Lab machines, but 
- *    if you're trying to work on your own computer, we strongly recommend 
+ *    NOTE: We've tested this assumption on the Teaching Lab machines, but
+ *    if you're trying to work on your own computer, we strongly recommend
  *    checking this assumption!
  * 4. Return the address of the first `struct pixel *` you initialized.
  */
 struct pixel **read_pixel_array(FILE *image, int pixel_array_offset, int width, int height) {
+  struct pixel **pixel_array = malloc(height * sizeof(struct pixel*));
 
+  fseek(image, pixel_array_offset, SEEK_SET);
+  for (size_t i = 0; i < height; i++) {
+    pixel_array[i] = malloc(width * sizeof(struct pixel));
+    for (size_t j = 0; j < width; j++) {
+      unsigned char *blue = malloc(sizeof(unsigned char));
+      unsigned char *green = malloc(sizeof(unsigned char));
+      unsigned char *red = malloc(sizeof(unsigned char));
+      fread(blue, 1, 1, image);
+      fread(green, 1, 1, image);
+      fread(red, 1, 1, image);
+      pixel_array[i][j].blue=*blue;
+      pixel_array[i][j].green=*green;
+      pixel_array[i][j].red=*red;
+      free(blue);
+      free(green);
+      free(red);
+    }
+  }
+  return pixel_array;
 }
 
 
