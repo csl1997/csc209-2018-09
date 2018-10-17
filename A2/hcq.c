@@ -302,7 +302,9 @@ int take_next_course(char *ta_name, Ta *ta_list, Student **stu_list_ptr, char *c
   time_t now;
   time(&now);
 
-  release_current_student(target);
+  if (target->current_student != NULL) {
+    release_current_student(target);
+  }
 
   if (*stu_list_ptr != NULL) {
     target->current_student = s;
