@@ -268,7 +268,9 @@ int take_next_overall(char *ta_name, Ta *ta_list, Student **stu_list_ptr) {
     time_t now;
     time(&now);
 
-    release_current_student(target);
+    if (target->current_student != NULL) {
+      release_current_student(target);
+    }
     if (*stu_list_ptr != NULL) {
       target->current_student = s;
       (s->course)->head = s->next_course;
