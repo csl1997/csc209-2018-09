@@ -105,26 +105,26 @@ int main(int argc, char **argv) {
   }
 
   // the parent
-  if (getpid() == parentID) {
     while (read(STDIN_FILENO, word, MAXWORD) > 0) {
-    printf("parent write\n");
-    write(fd_read[1], word, MAXWORD);
+      if (getpid() == parentID) {
+        printf("parent write\n");
+        write(fd_read[1], word, MAXWORD);
 
 
-    printf("wait for child\n");
-    wait(&status);
+        printf("wait for child\n");
+        wait(&status);
 
-    for (int f = 0; f < count; f++) {
-      while (read(fd_write[f][0], rec, sizeof(FreqRecord)) > 0) {
-        recs[c] = *rec;
-        c++;
+        for (int f = 0; f < count; f++) {
+          while (read(fd_write[f][0], rec, sizeof(FreqRecord)) > 0) {
+            recs[c] = *rec;
+            c++;
 
-        printf("parent is reading\n");
+            printf("parent is reading\n");
 
-        if (c == MAXRECORDS) break;
+            if (c == MAXRECORDS) break;
+          }
+        }
       }
     }
-  }
-}
   print_freq_records(recs);
 }
