@@ -28,10 +28,13 @@ FreqRecord *get_word(char *word, Node *head, char **file_names) {
         }
       }
 
+      // malloc the space for the FreqRecord list
       if ((rec = malloc(sizeof(FreqRecord) * (file_num + 1))) == NULL) {
           perror("create_FreqRecord");
           exit(1);
       }
+
+      // the the data into the list
       for (int i = 0; i < MAXFILES; i++) {
         if (curr->freq[i] > 0) {
           rec[count].freq = curr->freq[i];
@@ -39,6 +42,7 @@ FreqRecord *get_word(char *word, Node *head, char **file_names) {
           count++;
         }
       }
+
       // last element of the array of FreqRecord
       rec[file_num].freq = 0;
       strcpy(rec[file_num].filename, "");
@@ -89,6 +93,7 @@ void run_worker(char *dirname, int in, int out) {
   final.freq = 0;
   strcpy(final.filename, "");
 
+  // set the directory for the files
   strncpy(listfile, dirname, PATHLENGTH);
   strncat(listfile, "/index", PATHLENGTH - strlen(listfile));
   strncpy(namefile, dirname, PATHLENGTH);

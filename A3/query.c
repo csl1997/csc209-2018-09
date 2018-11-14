@@ -54,6 +54,7 @@ int main(int argc, char **argv) {
           exit(1);
       }
 
+      // store the file names and the file numbers
       if (S_ISDIR(sbuf.st_mode)) {
           strcpy(pathes[count], path);
           count++;
@@ -88,8 +89,11 @@ int main(int argc, char **argv) {
 
 
     if (pid == 0) { // child
-        close(fd_read[1]);
-        close(fd_write[i][0]);
+
+      if (close(fd_write[i][0]) == -1 || close(fd_read[1]) == -1) {
+        perror("close pipes from child");
+        exit(1);
+      }
 
         run_worker(pathes[i], fd_read[0], fd_write[i][1]);
         printf("child run worker\n");
@@ -97,8 +101,11 @@ int main(int argc, char **argv) {
         exit(0);
 
     } else { // parent
-      close(fd_write[i][1]);
-      close(fd_read[0]);
+
+      if (close(fd_write[i][1]) == -1 || close(fd_read[0]) == -1) {
+        perror("close pipes from parent");
+        exit(1);
+      }
 
     }
 
@@ -107,19 +114,18 @@ int main(int argc, char **argv) {
   // the parent
     while (read(STDIN_FILENO, word, MAXWORD) > 0) {
       if (getpid() == parentID) {
-        printf("parent write\n");
-        write(fd_read[1], word, MAXWORD);
 
+        if (write(fd_read[1], word, MAXWORD) == -1) {
+          perror("write to the parent");
+          exit(1);
+        }
 
-        printf("wait for child\n");
         wait(&status);
 
         for (int f = 0; f < count; f++) {
           while (read(fd_write[f][0], rec, sizeof(FreqRecord)) > 0) {
             recs[c] = *rec;
             c++;
-
-            printf("parent is reading\n");
 
             if (c == MAXRECORDS) break;
           }
