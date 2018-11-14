@@ -60,11 +60,15 @@ int main(int argc, char **argv) {
       }
   }
 
-  int fd_read[count][2];
+  int fd_read[2];
   int fd_write[count][2];
+  int status;
+  int c = 0;
+  pid_t parentID, pid;
+  parentID = getpid();
 
   for (int i = 0; i < count; i++) {
-    if (pipe(fd_read[i]) == -1) {
+    if (pipe(fd_read) == -1) {
       perror("pipe read");
       exit(1);
     }
@@ -73,39 +77,54 @@ int main(int argc, char **argv) {
       exit(1);
     }
 
-    int r = fork();
-    if (r < 0) {
+    if (getpid() == parentID) {
+      pid = fork();
+    }
+
+    if (pid < 0) {
       perror("fork");
       exit(1);
     }
 
-    if (r > 0) { // parent
+
+    if (pid == 0) { // child
+        close(fd_read[1]);
+        close(fd_write[i][0]);
+
+        run_worker(pathes[i], fd_read[0], fd_write[i][1]);
+        printf("child run worker\n");
+
+        exit(0);
+
+    } else { // parent
       close(fd_write[i][1]);
-      close(fd_read[i][0]);
+      close(fd_read[0]);
 
-    } else { // child
-      close(fd_read[i][1]);
-      close(fd_write[i][0]);
-
-      run_worker(pathes[i], fd_read[i][0], fd_write[i][1]);
-
-      exit(0);
     }
 
   }
 
   // the parent
-  int c = 0;
-  while (read(STDIN_FILENO, word, MAXWORD) > 0) {
-    for (int j = 0; j < count; j++) {
-      write(fd_read[j][1], word, MAXWORD);
-      while (read(fd_write[j][0], rec, sizeof(FreqRecord)) > 0) {
+  if (getpid() == parentID) {
+    while (read(STDIN_FILENO, word, MAXWORD) > 0) {
+    printf("parent write\n");
+    write(fd_read[1], word, MAXWORD);
+
+
+    printf("wait for child\n");
+    wait(&status);
+
+    for (int f = 0; f < count; f++) {
+      while (read(fd_write[f][0], rec, sizeof(FreqRecord)) > 0) {
         recs[c] = *rec;
         c++;
+
+        printf("parent is reading\n");
+
         if (c == MAXRECORDS) break;
       }
     }
   }
-
+}
   print_freq_records(recs);
 }
