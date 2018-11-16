@@ -20,8 +20,14 @@ int main(int argc, char **argv) {
 
     // TODO: complete this program according its description above.
 
-
-
+    int n;
+    for (int i = 0; i < 100; i++) {
+        n = random() % 100;
+        if ((fwrite(&n, 1, sizeof(int), fp)) != sizeof(int)) {
+            perror("fwrite");
+            exit(1);
+        }
+    }
 
 
     fclose(fp);
