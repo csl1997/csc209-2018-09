@@ -16,6 +16,13 @@ printindex : printindex.o ${OBJ}
 queryone : queryone.o worker.o ${OBJ}
 	gcc ${FLAGS} -o $@ queryone.o worker.o ${OBJ}
 
+query : query.o worker.o ${OBJ}
+	gcc ${FLAGS} -o $@ query.o worker.o ${OBJ}
+
+test : test.o freq_list.o worker.o 
+	gcc ${FLAGS} -o $@ test.o freq_list.o worker.o
+
+
 # Separately compile each C file
 %.o : %.c ${HDR}
 	gcc ${FLAGS} -c $<

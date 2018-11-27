@@ -18,6 +18,9 @@ int main(int argc, char **argv) {
         if (n < 0) {
             perror("fork");
             exit(1);
+        } else if (n > 0) {
+           int status;
+           wait(&status);
         }
         printf("ppid = %d, pid = %d, i = %d\n", getppid(), getpid(), i);
     }

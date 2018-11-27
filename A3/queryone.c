@@ -10,9 +10,9 @@
 #include "worker.h"
 
 /* A program to model calling run_worker and to test it. Notice that run_worker
- * produces binary output, so the output from this program to STDOUT will 
- * not be human readable.  You will need to work out how to save it and view 
- * it (or process it) so that you can confirm that your run_worker 
+ * produces binary output, so the output from this program to STDOUT will
+ * not be human readable.  You will need to work out how to save it and view
+ * it (or process it) so that you can confirm that your run_worker
  * is working properly.
  */
 int main(int argc, char **argv) {
@@ -72,6 +72,7 @@ int main(int argc, char **argv) {
         // Otherwise ignore it.
         if (S_ISDIR(sbuf.st_mode)) {
             run_worker(path, STDIN_FILENO, STDOUT_FILENO);
+            // printf("%s\n", path);
         }
     }
 

@@ -45,9 +45,9 @@ struct pixel **read_pixel_array(FILE *image, int pixel_array_offset, int width, 
       fread(blue, 1, 1, image);
       fread(green, 1, 1, image);
       fread(red, 1, 1, image);
-      pixel_array[i][j].blue=*blue;
-      pixel_array[i][j].green=*green;
-      pixel_array[i][j].red=*red;
+      pixel_array[i][j].blue = *blue;
+      pixel_array[i][j].green = *green;
+      pixel_array[i][j].red = *red;
       free(blue);
       free(green);
       free(red);
